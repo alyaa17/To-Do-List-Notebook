@@ -7,10 +7,20 @@ if [[ ! -s $password_file ]]
 then
     echo "Привет! Я твой новый помощник в планировании ежедневных дел :)"
     echo "Введи пароль, который будем использовать для доступа к твоим планам" 
-    read -p "Пароль: " password
+    read -sp "Пароль: " password
     if [[ -n $password ]]
     then
-        hash_pswd=$(hash_password $password)
+        echo
+        read -sp "Повтори ввод пароля: " second_password
+        if [[ $password -eq second_password ]]
+        then
+            hash_pswd=$(hash_password $password)
+        else 
+            echo 
+            echo "Пароли не совпадают! Повтори регистрацию."
+            sleep 1
+            exit
+        fi    
         echo $hash_pswd >> $password_file
         echo "Отлично, пароль для входа создан, не забудь его!" 
     else
@@ -19,7 +29,7 @@ then
     fi   
     echo "Выбирай из списка что будем делать" 
 else
-    read -p "Привет! Введи пароль доступа: " password
+    read -sp "Привет! Введи пароль доступа: " password
     if [[ $(hash_password $password) == $(cat $password_file) ]]
     then
         echo "Что сегодня будем делать?"
